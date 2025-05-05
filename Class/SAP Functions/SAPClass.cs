@@ -37,30 +37,6 @@ namespace SAPMethods
 
 
         /// <summary>
-        /// Busca todos los archivos de SAP (.sdb) en una carpeta a partir de una ruta 
-        /// y te devuelve una lista con todas las rutas de los archivos SAP.
-        /// </summary>
-        /// <param name="SAPFolderRoute">
-        /// Ruta de la carpeta donde buscar los archivos SAP (string). 
-        /// </param>
-        /// <returns>Lista de strings con las rutas de todos los archivos SAP en esa carpeta.</returns>
-        public List<string> SearchSAPFiles(string SAPFolderRoute)
-        {
-            List<string> SAPFilesRoute = new List<string>();
-
-            foreach (string file in Directory.GetFiles(SAPFolderRoute, "*.sdb", SearchOption.AllDirectories))
-            {
-                SAPFilesRoute.Add(file);
-            }
-
-            return SAPFilesRoute;
-        }
-
-
-        //---------------------------------------------------------------------------------
-
-
-        /// <summary>
         /// Abre la aplicación SAP2000 y te devuelve la instancia del objeto.
         /// </summary>
         /// <returns>Instancia del objecto SAP.</returns>
