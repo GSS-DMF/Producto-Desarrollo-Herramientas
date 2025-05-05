@@ -1,2 +1,2 @@
 # Producto-Desarrollo-Herramientas
-Repositorio para guardar las funciones que trabajen con Microsoft Word
+Repositorio para guardar las funciones que trabajen con Microsoft Word.
