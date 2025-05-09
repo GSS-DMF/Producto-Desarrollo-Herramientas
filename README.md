@@ -18,6 +18,7 @@ proyecto, vamos a nuestro fichero main y ponemos lo siguiente:
     using ExcelMethods;
     using WordMethods;
     using MathMethods;
+    using TableMethods;
 
     // Importamos las librerias necesarias
     using SAP2000v1;
