@@ -7,34 +7,18 @@ en sí poniendo el nombre), los outputs que se den, y una descripción lo más d
 lo que hace esa función.
 
 Para poder usar las clases será necesario copiar el archivo en tu proyecto, instanciar la clase 
-e importar estas clases.
+RepositorioFunciones e importar el namespace RepositorioFuncionesGitHub.
 
 Pongamos un código de ejemplo para poder usarlo. Una vez copiamos la carpeta Class entera en nuestro
 proyecto, vamos a nuestro fichero main y ponemos lo siguiente:
 
+
     // Importamos los namespaces
-    using SAPMethods;
-    using WindowsMethods;
-    using ExcelMethods;
-    using WordMethods;
-    using MathMethods;
-    using TableMethods;
-
-    // Importamos las librerias necesarias
-    using SAP2000v1;
-    using OfficeOpenXml;
-    using System;
-    using System.IO;
-    using Microsoft.Win32;
-    using System.Windows;
-    using System.Runtime.InteropServices;
-    using Excel = Microsoft.Office.Interop.Excel;
-    using System.Runtime.Versioning;
-    using System.Security;
+    using RepositorioFuncionesGitHub;
 
 
-Una vez importados los namespaces y librerias, lo siguiente es instanciar las clases en nuestro main. 
-Al principio tendremos un código similar al siguiente:
+Una vez importado el namespace, lo siguiente es instanciar las clases en nuestro main. Al principio 
+tendremos un código similar al siguiente:
 
 
     namespace PROYECTO1
@@ -52,7 +36,7 @@ Al principio tendremos un código similar al siguiente:
     }
 
 
-Para instanciarlas, ponemos lo siguiente:
+Para instanciarlo, ponemos lo siguiente:
 
     namespace PROYECTO1
     {
@@ -61,12 +45,8 @@ Para instanciarlas, ponemos lo siguiente:
         /// </summary>
         public partial class MainWindow : Window
         {
-            // Instanciamos las clases
-            SAPClass mySAPClass = new SAPClass();
-            WindowsClass myWindowsClass = new WindowsClass();
-            ExcelClass myExcelClass = new ExcelClass();
-            WordClass myWordClass = new WordClass();
-            MathClass myMathClass = new MathClass();
+            // Instanciamos la clase
+            RepositorioFunciones RepositorioFunciones = new RepositorioFunciones();
 
             .
             .
@@ -76,10 +56,17 @@ Para instanciarlas, ponemos lo siguiente:
 
 
 Ahora ya podremos usar todos los métodos que queramos. Para hacerlo, se debe llamar a la instancia
-de la clase en cuestión. Por ejemplo, si queremos usar el método RunModel de la clase SAPClass:
+de la clase en cuestión. Por ejemplo, si queremos usar el método RunModel de la clase SAP:
 
 
-    mySAPClass.RunModel(input1);
+    RepositorioFunciones.SAP.RunModel(input1);
+
+
+Si tenemos varias subclases dentro de una misma clase, seguimos la misma estructura (por ejemplo, 
+la subclase Format dentro de la clase Tables):
+
+
+    RepositorioFunciones.Tables.Format.Func1(input1);
 
 
 De esta forma, se pueden usar todos los métodos incluidos en los archivos de las clases. Para saber
