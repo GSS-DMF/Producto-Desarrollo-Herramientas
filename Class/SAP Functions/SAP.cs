@@ -326,7 +326,54 @@ namespace RepositorioFuncionesGitHub
 
             //---------------------------------------------------------------------------------
 
-        }
 
+
+            /// <summary>
+            /// Obtiene una tabla determinada de un modelo de SAP2000
+            /// </summary>
+            /// <param name="mySapModel">
+            /// Modelo SAP del que obtener la tabla
+            /// </param>
+            /// <param name="tableName">
+            /// nombre de la tabla a obtener
+            /// </param>
+            /// <returns>
+            /// Devuelve la tabla completa del modelo SAP2000
+            /// </returns>
+            public string[,] GetTableArray(cSapModel mySapModel, string tableName)
+            {
+                int ret = 0;
+                string[] FieldKeyList = new string[500];
+                int TableVersion = 0;
+                string[] FieldsKeysIncluded = new string[500];
+                int NumberRecords = 0;
+                string[] TableData = new string[500];
+
+                ret = mySapModel.DatabaseTables.GetTableForDisplayArray(tableName, ref FieldKeyList, "All", ref TableVersion, ref FieldsKeysIncluded, ref NumberRecords, ref TableData);
+
+                string[,] tabla = new string[NumberRecords + 1, FieldsKeysIncluded.Length];
+
+                for (int i = 0; i < FieldsKeysIncluded.Length; i++)
+                {
+                    tabla[0, i] = FieldsKeysIncluded[i];
+                }
+
+                for (int i = 0; i < NumberRecords; i++)
+                {
+                    for (int j = 0; j < FieldsKeysIncluded.Length; j++)
+                    {
+                        tabla[i + 1, j] = TableData[i * FieldsKeysIncluded.Length + j];
+                    }
+                }
+
+                return tabla;
+            }
+            
+
+            //---------------------------------------------------------------------------------
+
+
+            
+        }
     }
 }
