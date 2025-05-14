@@ -38,12 +38,6 @@ namespace RepositorioFuncionesGitHub
         //---------------------------------------------------------------------------------
 
 
-        private readonly ExcelFunctions _excelfunctions;
-
-        public FormatSubclass(ExcelFunctions excelfunctions)
-        {
-            _excelfunctions = excelfunctions;
-        }
 
 
         //---------------------------------------------------------------------------------
