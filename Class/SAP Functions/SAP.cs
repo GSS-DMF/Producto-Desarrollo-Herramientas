@@ -273,6 +273,102 @@ namespace RepositorioFuncionesGitHub
             //---------------------------------------------------------------------------------
 
 
+
+            /// <summary>
+            /// Calculamos la longitud de cualquier elemento de un modelo SAP2000, a partir del nombre de un segmento.
+            /// </summary>
+            /// <param name="SapModel">
+            /// Instancia del modelo SAP (SapModel) con un fichero calculado cargado. 
+            /// </param>
+            /// <param name="elementName">
+            /// Nombre del elemento del cual se quiere calcular la longitud.
+            /// </param>
+            public static double LongitudSegmento(cSapModel sapModel, string elementName)
+            {
+                double x1 = 0, y1 = 0, z1 = 0, x2 = 0, y2 = 0, z2 = 0;
+                string point1 = "";
+                string point2 = "";
+
+                // Obtener las coordenadas de los nodos del elemento
+                sapModel.FrameObj.GetPoints(elementName, ref point1, ref point2);
+                sapModel.PointObj.GetCoordCartesian(point1, ref x1, ref y1, ref z1);
+                sapModel.PointObj.GetCoordCartesian(point2, ref x2, ref y2, ref z2);
+
+                // Calcular la longitud del elemento
+                double length = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2) + Math.Pow(z2 - z1, 2));
+
+                return Math.Round(length, 2);
+            }
+
+
+            //---------------------------------------------------------------------------------
+
+
+
+            /// <summary>
+            /// Calculamos la longitud de cualquier elemento de refuerzo de un modelo SAP2000 2VR3, a partir del nombre de un refuerzo.
+            /// Nombre de los refuerzos que se pueden calcular: SBsNr_x, SBiNr_x, SBsSr_x, SBiSr_x.
+            /// Donde "x" es el numero de la viga secundaria del cual se quiere calcular la longitud.
+            /// </summary>
+            /// <param name="SapModel">
+            /// Instancia del modelo SAP (SapModel) con un fichero calculado cargado. 
+            /// </param>
+            /// <param name="elementName">
+            /// Nombre del elemento del cual se quiere calcular la longitud.
+            /// </param>
+            public static double LongitudRefuerzo(cSapModel sapModel, string elementName)
+            {
+                double x1 = 0, y1 = 0, z1 = 0, x2 = 0, y2 = 0, z2 = 0;
+                string point1 = "";
+                string point2 = "";
+
+                elementName = elementName.Replace("_", "r_");
+
+                // Obtener las coordenadas de los nodos del elemento
+                sapModel.FrameObj.GetPoints(elementName, ref point1, ref point2);
+                sapModel.PointObj.GetCoordCartesian(point1, ref x1, ref y1, ref z1);
+                sapModel.PointObj.GetCoordCartesian(point2, ref x2, ref y2, ref z2);
+
+                // Calcular la longitud del elemento
+                double length = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2) + Math.Pow(z2 - z1, 2));
+
+                return Math.Round(length, 2);
+            }
+
+
+            //---------------------------------------------------------------------------------
+
+
+
+            /// <summary>
+            /// Calcula la longitud entre dos puntos. Partiendo de los nombres de los distintos puntos.
+            /// </summary>
+            /// <param name="SapModel">
+            /// Instancia del modelo SAP (SapModel) con un fichero calculado cargado. 
+            /// </param>
+            /// <param name="point1">
+            /// Nombre del primer punto del que se quiere calcular la distancia.
+            /// </param>
+            /// /// <param name="point2">
+            /// Nombre del segundo punto del que se quiere calcular la distancia.
+            /// </param>
+            public static double LongitudEntrePuntos(cSapModel mySapModel, string point1, string point2)
+            {
+                int ret = 0;
+
+                double[] coord_1 = new double[3];
+                double[] coord_2 = new double[3];
+
+                ret = mySapModel.PointObj.GetCoordCartesian(point1, ref coord_1[0], ref coord_1[1], ref coord_1[2]);
+                ret = mySapModel.PointObj.GetCoordCartesian(point2, ref coord_2[0], ref coord_2[1], ref coord_2[2]);
+
+                double Longitud = Math.Sqrt(Math.Pow(coord_1[0] - coord_2[0], 2) + Math.Pow(coord_1[1] - coord_2[1], 2) + Math.Pow(coord_1[2] - coord_2[2], 2));
+
+                return Longitud;
+            }
+
+
+            //---------------------------------------------------------------------------------
         }
 
         public class ExcelTablesSubclass // Clase para las funciones que hagan análisis (calcular, seleccionar hipótesis...)
