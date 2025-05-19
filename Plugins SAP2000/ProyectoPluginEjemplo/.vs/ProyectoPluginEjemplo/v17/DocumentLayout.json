@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\InSync\\Producto-Desarrollo-Herramientas\\Plugins SAP2000\\ProyectoPluginEjemplo\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{825E01A2-13D5-4146-A944-075DB81BA78D}|ProyectoPluginEjemplo.csproj|c:\\insync\\producto-desarrollo-herramientas\\plugins sap2000\\proyectopluginejemplo\\proyectopluginejemplo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{825E01A2-13D5-4146-A944-075DB81BA78D}|ProyectoPluginEjemplo.csproj|solutionrelative:proyectopluginejemplo.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ProyectoPluginEjemplo.cs",
+              "DocumentMoniker": "C:\\InSync\\Producto-Desarrollo-Herramientas\\Plugins SAP2000\\ProyectoPluginEjemplo\\ProyectoPluginEjemplo.cs",
+              "RelativeDocumentMoniker": "ProyectoPluginEjemplo.cs",
+              "ToolTip": "C:\\InSync\\Producto-Desarrollo-Herramientas\\Plugins SAP2000\\ProyectoPluginEjemplo\\ProyectoPluginEjemplo.cs",
+              "RelativeToolTip": "ProyectoPluginEjemplo.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAAGAAAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-19T07:26:27.76Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

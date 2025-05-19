@@ -1,0 +1,8 @@
+C:\InSync\Producto-Desarrollo-Herramientas\Plugins SAP2000\ProyectoPluginEjemplo\bin\Debug\ProyectoPluginEjemplo.dll
+C:\InSync\Producto-Desarrollo-Herramientas\Plugins SAP2000\ProyectoPluginEjemplo\bin\Debug\ProyectoPluginEjemplo.pdb
+C:\InSync\Producto-Desarrollo-Herramientas\Plugins SAP2000\ProyectoPluginEjemplo\bin\Debug\SAP2000v1.dll
+C:\InSync\Producto-Desarrollo-Herramientas\Plugins SAP2000\ProyectoPluginEjemplo\obj\Debug\ProyectoPluginEjemplo.csproj.AssemblyReference.cache
+C:\InSync\Producto-Desarrollo-Herramientas\Plugins SAP2000\ProyectoPluginEjemplo\obj\Debug\ProyectoPluginEjemplo.csproj.CoreCompileInputs.cache
+C:\InSync\Producto-Desarrollo-Herramientas\Plugins SAP2000\ProyectoPluginEjemplo\obj\Debug\Proyecto.F14969F9.Up2Date
+C:\InSync\Producto-Desarrollo-Herramientas\Plugins SAP2000\ProyectoPluginEjemplo\obj\Debug\ProyectoPluginEjemplo.dll
+C:\InSync\Producto-Desarrollo-Herramientas\Plugins SAP2000\ProyectoPluginEjemplo\obj\Debug\ProyectoPluginEjemplo.pdb
