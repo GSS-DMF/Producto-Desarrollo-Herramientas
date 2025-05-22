@@ -365,5 +365,37 @@ namespace RepositorioFuncionesGitHub
             return tablaFiltrada;
         }
 
+        /// <summary>
+        /// convierte una lista en un string tabla [,]
+        /// </summary>
+        /// <param name="lista">
+        /// lista a convertir
+        /// </param>
+        /// <returns>
+        /// string [,] tabla 
+        /// </returns>
+        public string[,] ConvertListToTable(List<string[]> lista)
+        {
+
+            if (lista == null || lista.Count == 0)
+            {
+                return new string[0, 0];
+            }
+
+            int filas = lista.Count;
+            int columnas = lista[0].Length;
+
+            string[,] resultado = new string[filas, columnas];
+
+            for (int i = 0; i < filas; i++)
+            {
+                for (int j = 0; j < columnas; j++)
+                {
+                    resultado[i, j] = lista[i][j];
+                }
+            }
+
+            return resultado;
+        }
     }
 }

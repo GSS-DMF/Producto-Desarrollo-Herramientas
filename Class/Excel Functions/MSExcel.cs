@@ -798,4 +798,65 @@ namespace RepositorioFuncionesGitHub
             MessageBox.Show("Error al guardar el archivo de Excel: " + ex.Message);
         }
     }
+
+    ///<summary>
+    ///Abre excel en segundo plano
+    ///</summary>
+    public void StartExcel()
+    {
+        Excel.Application excelApp = new Excel.Application();
+        excelApp.Visible = false;
+        Excel.Workbook workbook = excelApp.Workbooks.Add();
+        Excel.Worksheet sheet=(Excel.Worksheet)workbook.Sheets[1];
+    }
+
+    /// <summary>
+    /// Pega una tabla en un libro excel nuevo que abre en segundo plano. Se puede utilizar para
+    /// trabajar con tablas en segundo plano de una forma rápida
+    /// </summary>
+    /// <param name="table">
+    /// Tabla de datos que se quiere copiar
+    /// </param>
+    /// <returns>
+    /// Devuelve el objeto libro de excel que ha abierto para copiar la tabla
+    /// </returns>
+    public Excel.Workbook PasteTableInExcel(string[,] table)
+    {
+        Excel.Workbook workbook = null;
+
+        try
+        {
+            int numFilas = table.GetLength(0);
+            int numColumnas = table.GetLength(1);
+
+            //Iniciar Excel
+            Excel.Application excelApp = new Excel.Application();
+            excelApp.Visible = false;
+            workbook = excelApp.Workbooks.Add();
+            Excel.Worksheet sheet = (Excel.Worksheet)workbook.Sheets[1];
+
+            //Crear un array 2D para asignar de una sola vez
+            object[,] excelData=new object[numFilas,numColumnas];
+            for (int i = 0; i < numFilas; i++)
+            {
+                for (int j = 0; j < numColumnas; j++)
+                {
+                    excelData[i,j] = table[i,j];
+                }
+            }
+
+            // Asignar el rango de una sola vez
+            Excel.Range startCell = (Excel.Range)sheet.Cells[1, 1];
+            Excel.Range endCell = (Excel.Range)sheet.Cells[numFilas, numColumnas];
+            Excel.Range writeRange = sheet.Range[startCell, endCell];
+            writeRange.Value2 = excelData;
+
+            return workbook;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Error al copiar la tabla en Excel: " + ex.Message);
+            return null;
+        }
+    }
 }

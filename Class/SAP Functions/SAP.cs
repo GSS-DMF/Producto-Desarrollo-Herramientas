@@ -151,6 +151,29 @@ namespace RepositorioFuncionesGitHub
 
 
             /// <summary>
+            /// Abre SAP en segundo plano
+            /// </summary>
+            /// <returns>
+            /// Devuelve el objeto SAP abierto
+            /// </returns>
+      
+            public cOAPI OpenSAPObjectHidden()
+            {
+                cHelper myHelper = new Helper();
+                cOAPI mySapObject = null;
+
+                myHelper = (cHelper)Activator.CreateInstance(Type.GetTypeFromProgID("SAP2000v1.Helper", true));
+                mySapObject = myHelper.CreateObject(ProgramPath);
+                mySapObject.ApplicationStart(eUnits.N_mm_C,false);
+
+                return mySapObject;
+            }
+
+
+            //---------------------------------------------------------------------------------
+
+
+            /// <summary>
             /// Carga un archivo .sdb a partir de su ruta y de la instancia del modelo (SapModel).
             /// </summary>
             /// <param name="SapModel">
@@ -163,6 +186,7 @@ namespace RepositorioFuncionesGitHub
             {
                 SapModel.File.OpenFile(SAPFileRoute);
             }
+
 
 
             //---------------------------------------------------------------------------------
@@ -193,7 +217,6 @@ namespace RepositorioFuncionesGitHub
             //---------------------------------------------------------------------------------
 
         }
-
 
         public class AnalysisSubclass // Clase para las funciones que hagan análisis (calcular, seleccionar hipótesis...)
         {
@@ -369,6 +392,56 @@ namespace RepositorioFuncionesGitHub
 
 
             //---------------------------------------------------------------------------------
+
+
+            /// <summary>
+            /// Obtiene una lista con los nombres de los elementos de un modelo según la tipología que se elija
+            /// </summary>
+            /// <param name="objectType">
+            /// Tipología de elemento a seleccionar
+            /// 1:Point Object
+            /// 2:Frame Object
+            /// 3:Cable Object
+            /// 4:Tendom Object
+            /// 5:Area Object
+            /// 6:Solid Object
+            /// 7:Link Object
+            /// </param>
+            /// <returns>
+            /// Devuelve una lista cn los nombres de los elementos del modelo
+            /// </returns>
+            public string[] GetElements(cSapModel mySapModel, int objectType)
+            {
+                //Seleccionamos todo en el modelo
+                mySapModel.SelectObj.All();
+
+                int NumberItems = 0;
+                int[] Type = new int[1];
+                string[] ObjectName = new string[1];
+
+                mySapModel.SelectObj.GetSelected(ref NumberItems, ref Type, ref ObjectName);
+
+                //Obtenemos el listado de elementos en función de lo que se necesite: 
+
+                List<string> nombres = new List<string>();
+                for (int i = 0; i < NumberItems; i++)
+                {
+                    if (Type[i] == objectType)
+                    {
+                        nombres.Add(ObjectName[i]);
+                    }
+                }
+
+                string[] elementos = nombres.ToArray();
+
+                mySapModel.SelectObj.ClearSelection();
+
+                return elementos;
+            }
+
+            //---------------------------------------------------------------------------------
+
+
         }
 
         public class ExcelTablesSubclass // Clase para las funciones que hagan análisis (calcular, seleccionar hipótesis...)

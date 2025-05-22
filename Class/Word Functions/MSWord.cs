@@ -181,21 +181,18 @@ namespace RepositorioFuncionesGitHub
         /// <param name="text">
         /// Texto que se quiere añadir al documento
         /// </param>
-        /// <param name="filePath">
-        /// Ruta del documento word, con nombre de archivo y extensión .docx
-        /// </param>
         /// <param name="doc">
         /// Objeto word abierto
         /// </param>
         /// <param name="titleStyle">
         /// Booleano para elegir si el texto es normal(false) o título(true). Por defecto es texto normal. 
         /// </param>
-        public void AddText(string text, string filePathc, Microsoft.Office.Interop.Word.Document doc, bool? titleStyle = false)
+        public void AddText(string text, Microsoft.Office.Interop.Word.Document doc, bool? titleStyle = false)
         {
             try
             {
-                    // Copiar el texto almacenado en la variable 'texto' al documento de Word
-                    Microsoft.Office.Interop.Word.Range range = doc.Content;
+                // Copiar el texto almacenado en la variable 'texto' al documento de Word
+                Microsoft.Office.Interop.Word.Range range = doc.Content;
                 range.Collapse(WdCollapseDirection.wdCollapseEnd);
                 range.Font.Name = "Neo Tech Std";
                 range.Text += text;
