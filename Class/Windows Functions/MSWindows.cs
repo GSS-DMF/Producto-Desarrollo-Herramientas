@@ -42,8 +42,6 @@ namespace RepositorioFuncionesGitHub
 
 
 
-
-
         //---------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------
 
@@ -139,17 +137,21 @@ namespace RepositorioFuncionesGitHub
             /// cualquier extensión. Te devuelve un string con su ruta. Si no se selecciona 
             /// nada te devuelve un string vacío.
             /// </summary>
+            /// <param name="initialDirectory">
+            /// Última ruta elegida. Útil si estas haciendo varias selecciones y no quieres tener
+            /// que volver de nuevo siempre a la misma carpeta.
+            /// </param>
             /// <returns>
             /// Ruta del archivo seleccionado (string). Si no se selecciona nada te devuelve 
             /// un string vacío.
             /// </returns>
-            public string SearchFile()
+            public string SearchFile(string initialDirectory = null)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog
                 {
                     Title = "Seleccionar archivo",
                     Filter = "Todos los archivos (*.*)|*.*",
-                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+                    InitialDirectory = string.IsNullOrEmpty(initialDirectory) ? Environment.GetFolderPath(Environment.SpecialFolder.Desktop) : initialDirectory
                 };
 
                 if (openFileDialog.ShowDialog() == true)
@@ -170,17 +172,21 @@ namespace RepositorioFuncionesGitHub
             /// extensión ".sdb". Te devuelve un string con su ruta. Si no se selecciona 
             /// nada te devuelve un string vacío.
             /// </summary>
+            /// <param name="initialDirectory">
+            /// Última ruta elegida. Útil si estas haciendo varias selecciones y no quieres tener
+            /// que volver de nuevo siempre a la misma carpeta. 
+            /// </param>
             /// <returns>
             /// Ruta del archivo seleccionado (string). Si no se selecciona nada te devuelve 
             /// un string vacío.
             /// </returns>
-            public string SearchSAPFile()
+            public string SearchSAPFile(string initialDirectory = null)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog
                 {
                     Title = "Seleccionar archivo",
                     Filter = "Archivos SDB (*.sdb)|*.sdb",
-                    InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop)
+                    InitialDirectory = string.IsNullOrEmpty(initialDirectory) ? Environment.GetFolderPath(Environment.SpecialFolder.Desktop) : initialDirectory
                 };
 
                 if (openFileDialog.ShowDialog() == true)

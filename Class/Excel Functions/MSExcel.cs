@@ -277,6 +277,58 @@ namespace RepositorioFuncionesGitHub
                 }
             }
 
+            ///<summary>
+            ///Dar formato de encabezado de las tablas de reacciones que saca SAP2000 
+            ///a un excel que queramos en un rango dado. Solo pone el formato, no el texto.
+            ///</summary>
+            ///<param name="ExcelFileRoute">
+            ///Excel al que aplicar el formato
+            ///</param>
+            ///<param name="Sheet">
+            ///Hoja del excel en la que aplicar el formato
+            ///</param>
+            ///<param name="PasteRange">
+            ///Primera celda en la que aplicar el formato (celda de arriba la izquierda)
+            ///</param>
+            public void AddSAPReactionsHeader(string ExcelFileRoute, string Sheet, string PasteRange)
+            {
+                FileInfo archivoExcel = new FileInfo(ExcelFileRoute);
+
+                using (ExcelPackage paquete = new ExcelPackage(archivoExcel))
+                {
+                    ExcelWorksheet hoja = paquete.Workbook.Worksheets[Sheet];
+                    var inicio = hoja.Cells[PasteRange].Start;
+
+                    int startRow = inicio.Row;
+                    int startCol = inicio.Column;
+                    int columnas = 10;
+
+                    var rangoFila1 = hoja.Cells[startRow, startCol, startRow, startCol + columnas - 1];
+                    rangoFila1.Merge = true;
+                    rangoFila1.Style.Font.Bold = true;
+                    rangoFila1.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    rangoFila1.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(51, 204, 204));
+
+                    for (int i = 0; i < columnas; i++)
+                    {
+                        var celda = hoja.Cells[startRow + 1, startCol + i];
+                        celda.Style.Font.Bold = true;
+                        celda.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        celda.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(204, 255, 255));
+                    }
+
+                    for (int i = 0; i < columnas; i++)
+                    {
+                        var celda = hoja.Cells[startRow + 2, startCol + i];
+                        celda.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                        celda.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(204, 255, 255));
+                    }
+
+                    paquete.Save();
+                }
+            }
+
+
         }
 
     }
