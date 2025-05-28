@@ -50,21 +50,6 @@ namespace RepositorioFuncionesGitHub
 
 
 
-
-
-
-
-        //---------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------
-
-        // Escribir todas las subclases aquí. Añadir un docstring para tener 
-        // información acerca de su funcionamiento y parámetros de entrada
-        // y salida. Recordar añadirlo al excel de registro de métodos. Poner 
-        // todos los métodos públicos para evitar errores de acceso.
-
-        //---------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------
-
         /// <summary>
         /// Mantiene las columnas de la tabla seleccionadas y elimina el resto
         /// </summary>
@@ -326,14 +311,14 @@ namespace RepositorioFuncionesGitHub
                 bool agregarFila = false;
                 string valor = table[i, indiceColumna];
 
-                if (minor==true)
+                if (minor == true)
                 {
-                    if(double.TryParse(valor, out double numero)&& numero < value)
+                    if (double.TryParse(valor, out double numero) && numero < value)
                     {
-                        agregarFila=true;
+                        agregarFila = true;
                     }
                 }
-                else if(minor == false)
+                else if (minor == false)
                 {
                     if (double.TryParse(valor, out double numero) && numero > value)
                     {
@@ -397,5 +382,22 @@ namespace RepositorioFuncionesGitHub
 
             return resultado;
         }
+
+
+
+        //---------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------
+
+        // Escribir todas las subclases aquí. Añadir un docstring para tener 
+        // información acerca de su funcionamiento y parámetros de entrada
+        // y salida. Recordar añadirlo al excel de registro de métodos. Poner 
+        // todos los métodos públicos para evitar errores de acceso.
+
+        //---------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------
+
+
+
+
     }
 }

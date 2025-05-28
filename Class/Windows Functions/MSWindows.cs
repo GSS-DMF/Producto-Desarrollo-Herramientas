@@ -71,34 +71,15 @@ namespace RepositorioFuncionesGitHub
         //---------------------------------------------------------------------------------
 
 
+
         public class FileManagerSubclass // Clase para las funciones que gestionen ventanas y ficheros
         {
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-            // Traemos las propiedades de clase de la clase pricipal
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-
-
             private readonly MSWindows _mswindows;
 
             public FileManagerSubclass(MSWindows mswindows)
             {
                 _mswindows = mswindows;
             }
-
-
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-            // Introducimos los métodos de la subclase 
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
 
 
 
@@ -126,11 +107,6 @@ namespace RepositorioFuncionesGitHub
 
                 return string.Empty;
             }
-
-
-            //---------------------------------------------------------------------------------
-
-
 
             /// <summary>
             /// Abre una ventana de Windows y te permite seleccionar un archivo con 
@@ -162,11 +138,6 @@ namespace RepositorioFuncionesGitHub
                 return string.Empty;
             }
 
-
-            //---------------------------------------------------------------------------------
-
-
-
             /// <summary>
             /// Abre una ventana de Windows y te permite seleccionar un archivo de SAP con 
             /// extensión ".sdb". Te devuelve un string con su ruta. Si no se selecciona 
@@ -197,11 +168,6 @@ namespace RepositorioFuncionesGitHub
                 return string.Empty;
             }
 
-
-            //---------------------------------------------------------------------------------
-
-
-
             /// <summary>
             /// Busca todos los archivos de SAP (.sdb) en una carpeta a partir de una ruta 
             /// y te devuelve una lista con todas las rutas de los archivos SAP.
@@ -221,11 +187,6 @@ namespace RepositorioFuncionesGitHub
 
                 return SAPFilesRoute;
             }
-
-
-            //---------------------------------------------------------------------------------
-
-
 
             /// <summary>
             /// Abre ventanas para que selecciones los archivos de SAP de posición de 
@@ -257,14 +218,6 @@ namespace RepositorioFuncionesGitHub
                 FileRouteList[index + 2] = SearchSAPFile();
 
             }
-
-
-
-            //---------------------------------------------------------------------------------
-
-
-
         }
-
     }
 }

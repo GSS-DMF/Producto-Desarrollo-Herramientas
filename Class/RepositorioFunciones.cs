@@ -19,7 +19,7 @@ namespace RepositorioFuncionesGitHub
         public MSExcel MSExcel = new MSExcel();
         public MSWord MSWord = new MSWord();
         public SAP SAP = new SAP();
-        public Math Math = new Math();
+        public MyMath MyMath = new MyMath();
         public Tables Tables = new Tables();
 
     }

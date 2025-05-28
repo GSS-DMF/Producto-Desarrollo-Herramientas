@@ -1,5 +1,8 @@
 using SAP2000v1;
+using System;
 using System.IO;
+using System.Text.RegularExpressions;
+
 
 
 namespace RepositorioFuncionesGitHub
@@ -35,6 +38,8 @@ namespace RepositorioFuncionesGitHub
         public DesignSubclass Design { get; }
 
         public ElementFinderSubclass ElementFinder { get; }
+
+
 
         //---------------------------------------------------------------------------------
         //---------------------------------------------------------------------------------
@@ -84,34 +89,15 @@ namespace RepositorioFuncionesGitHub
         //---------------------------------------------------------------------------------
 
 
+
         public class FileManagerSubclass // Clase para las funciones que gestionen ventanas y ficheros de SAP
         {
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-            // Traemos las propiedades de clase de la clase pricipal
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-
-
             private readonly SAP _sap;
 
             public FileManagerSubclass(SAP sap)
             {
                 _sap = sap;
             }
-
-
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-            // Introducimos los métodos de la subclase 
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
 
 
 
@@ -131,10 +117,6 @@ namespace RepositorioFuncionesGitHub
                 return mySapObject;
             }
 
-
-            //---------------------------------------------------------------------------------
-
-
             /// <summary>
             /// Inicializa un modelo de SAP2000 a partir de una instancia del objecto (SapObject).
             /// </summary>
@@ -150,17 +132,13 @@ namespace RepositorioFuncionesGitHub
                 return mySapModel;
             }
 
-
-            //---------------------------------------------------------------------------------
-
-
             /// <summary>
             /// Abre SAP en segundo plano
             /// </summary>
             /// <returns>
             /// Devuelve el objeto SAP abierto
             /// </returns>
-      
+
             public cOAPI OpenSAPObjectHidden()
             {
                 cHelper myHelper = new Helper();
@@ -168,14 +146,10 @@ namespace RepositorioFuncionesGitHub
 
                 myHelper = (cHelper)Activator.CreateInstance(Type.GetTypeFromProgID("SAP2000v1.Helper", true));
                 mySapObject = myHelper.CreateObject(ProgramPath);
-                mySapObject.ApplicationStart(eUnits.N_mm_C,false);
+                mySapObject.ApplicationStart(eUnits.N_mm_C, false);
 
                 return mySapObject;
             }
-
-
-            //---------------------------------------------------------------------------------
-
 
             /// <summary>
             /// Carga un archivo .sdb a partir de su ruta y de la instancia del modelo (SapModel).
@@ -183,7 +157,7 @@ namespace RepositorioFuncionesGitHub
             /// <param name="SapModel">
             /// Instancia del modelo SAP (SapModel). 
             /// </param>
-            /// <param name="SapFileRoute">
+            /// <param name="SAPFileRoute">
             /// Ruta del fichero .sdb de SAP2000 que se desea cargar (string). 
             /// </param>
             public void LoadModels(cSapModel SapModel, string SAPFileRoute)
@@ -191,17 +165,12 @@ namespace RepositorioFuncionesGitHub
                 SapModel.File.OpenFile(SAPFileRoute);
             }
 
-
-
-            //---------------------------------------------------------------------------------
-
-
             /// <summary>
             /// Cierra la aplicación y limpia las instancias del SapModel y del 
             /// SapObject. Después de este método, si se quiere cargar otro fichero 
             /// se deberá volver a inicializar el SapObject y el SapModel.
             /// </summary>
-            /// <param name="SapObject">
+            /// <param name="SAPObject">
             /// Instancia del objecto SAP (SapObject). 
             /// </param>
             /// <param name="SapModel">
@@ -216,40 +185,18 @@ namespace RepositorioFuncionesGitHub
                 GC.Collect(); // Forzar recolección de basura para limpiar instancias
                 GC.WaitForPendingFinalizers();
             }
-
-
-            //---------------------------------------------------------------------------------
-
         }
+
+
 
         public class AnalysisSubclass // Clase para las funciones que hagan análisis (calcular, seleccionar hipótesis...)
         {
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-            // Traemos las propiedades de clase de la clase pricipal
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-
-
             private readonly SAP _sap;
 
             public AnalysisSubclass(SAP sap)
             {
                 _sap = sap;
             }
-
-
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-            // Introducimos los métodos de la subclase 
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
 
 
 
@@ -262,12 +209,25 @@ namespace RepositorioFuncionesGitHub
             /// </param>
             public void RunModel(cSapModel SapModel)
             {
-                SapModel.Analyze.RunAnalysis();
+                if (SapModel.GetModelIsLocked() == false)
+                {
+                    SapModel.Analyze.RunAnalysis();
+                }
             }
 
-
-            //---------------------------------------------------------------------------------
-
+            /// <summary>
+            /// Desbloquea un modelo SAP2000 calculado.
+            /// </summary>
+            /// <param name="SapModel">
+            /// Instancia del modelo SAP (SapModel) con un fichero calculable cargado. 
+            /// </param>
+            public static void UnlockModel(cSapModel SapModel)
+            {
+                if (SapModel.GetModelIsLocked() == true)
+                {
+                    SapModel.SetModelIsLocked(false);
+                }
+            }
 
             /// <summary>
             /// Selecciona las hipótesis que se quieren analizar para sacar algún output 
@@ -296,21 +256,16 @@ namespace RepositorioFuncionesGitHub
                 SapModel.Results.Setup.SetComboSelectedForOutput(Combo);
             }
 
-
-            //---------------------------------------------------------------------------------
-
-
-
             /// <summary>
             /// Calculamos la longitud de cualquier elemento de un modelo SAP2000, a partir del nombre de un segmento.
             /// </summary>
-            /// <param name="SapModel">
+            /// <param name="sapModel">
             /// Instancia del modelo SAP (SapModel) con un fichero calculado cargado. 
             /// </param>
             /// <param name="elementName">
             /// Nombre del elemento del cual se quiere calcular la longitud.
             /// </param>
-            public static double LongitudSegmento(cSapModel sapModel, string elementName)
+            public double LongitudSegmento(cSapModel sapModel, string elementName)
             {
                 double x1 = 0, y1 = 0, z1 = 0, x2 = 0, y2 = 0, z2 = 0;
                 string point1 = "";
@@ -327,23 +282,18 @@ namespace RepositorioFuncionesGitHub
                 return Math.Round(length, 2);
             }
 
-
-            //---------------------------------------------------------------------------------
-
-
-
             /// <summary>
             /// Calculamos la longitud de cualquier elemento de refuerzo de un modelo SAP2000 2VR3, a partir del nombre de un refuerzo.
             /// Nombre de los refuerzos que se pueden calcular: SBsNr_x, SBiNr_x, SBsSr_x, SBiSr_x.
             /// Donde "x" es el numero de la viga secundaria del cual se quiere calcular la longitud.
             /// </summary>
-            /// <param name="SapModel">
+            /// <param name="sapModel">
             /// Instancia del modelo SAP (SapModel) con un fichero calculado cargado. 
             /// </param>
             /// <param name="elementName">
             /// Nombre del elemento del cual se quiere calcular la longitud.
             /// </param>
-            public static double LongitudRefuerzo(cSapModel sapModel, string elementName)
+            public double LongitudRefuerzo(cSapModel sapModel, string elementName)
             {
                 double x1 = 0, y1 = 0, z1 = 0, x2 = 0, y2 = 0, z2 = 0;
                 string point1 = "";
@@ -362,15 +312,10 @@ namespace RepositorioFuncionesGitHub
                 return Math.Round(length, 2);
             }
 
-
-            //---------------------------------------------------------------------------------
-
-
-
             /// <summary>
             /// Calcula la longitud entre dos puntos. Partiendo de los nombres de los distintos puntos.
             /// </summary>
-            /// <param name="SapModel">
+            /// <param name="mySapModel">
             /// Instancia del modelo SAP (SapModel) con un fichero calculado cargado. 
             /// </param>
             /// <param name="point1">
@@ -379,7 +324,7 @@ namespace RepositorioFuncionesGitHub
             /// /// <param name="point2">
             /// Nombre del segundo punto del que se quiere calcular la distancia.
             /// </param>
-            public static double LongitudEntrePuntos(cSapModel mySapModel, string point1, string point2)
+            public double LongitudEntrePuntos(cSapModel mySapModel, string point1, string point2)
             {
                 int ret = 0;
 
@@ -393,10 +338,6 @@ namespace RepositorioFuncionesGitHub
 
                 return Longitud;
             }
-
-
-            //---------------------------------------------------------------------------------
-
 
             /// <summary>
             /// Obtiene una lista con los nombres de los elementos de un modelo según la tipología que se elija
@@ -443,9 +384,6 @@ namespace RepositorioFuncionesGitHub
                 return elementos;
             }
 
-            //---------------------------------------------------------------------------------
-
-
             /// <summary>
             /// Dado el nombre de una barra de un modelo SAP, devuelve como string la altura,
             /// el espesor, y el material del perfil SHS asignado a la barra como un double[] {"B","e","fy"}
@@ -459,7 +397,7 @@ namespace RepositorioFuncionesGitHub
             /// <returns>
             /// altura B y el espesor e del perfil SHS asignado a la barra como un double[] {"B","e","fy"}
             /// </returns>
-            public static double[] GetSHSProperties(cSapModel mySapModel, string frameName)
+            public double[] GetSHSProperties(cSapModel mySapModel, string frameName)
             {
                 string PropName = "";
                 string SAuto = "";
@@ -480,8 +418,6 @@ namespace RepositorioFuncionesGitHub
 
                 return new double[] { B, e, fy };
             }
-
-            //---------------------------------------------------------------------------------
 
             /// <summary>
             /// Devuelve la envolvente de esfuerzos de unas barras en un punto determinado 
@@ -504,12 +440,12 @@ namespace RepositorioFuncionesGitHub
             /// <returns>
             /// Devuelve un array con la envolvente de esfuerzos del conjunto de barras
             /// </returns>
-            public static double[] GetFrameForces(cSapModel mySapModel,string combo, string[] frames, double point)
+            public double[] GetFrameForces(cSapModel mySapModel, string combo, string[] frames, double point)
             {
                 //Cambiar unidades, seleccionar hipótesis y analizar el modelo
                 mySapModel.SetPresentUnits(eUnits.kN_m_C);
-                SAP.AnalysisSubclass.RunModel(mySapModel);
-                SAP.AnalysisSubclass.SelectHypotesis(mySapModel, combo, true);
+                _sap.Analysis.RunModel(mySapModel);
+                _sap.Analysis.SelectHypotesis(mySapModel, combo, true);
 
                 // Inicializar arrays de resultados globales
                 double[] N = new double[frames.Length];
@@ -570,8 +506,6 @@ namespace RepositorioFuncionesGitHub
 
                 return new double[] { N.Max(), Vy.Max(), Vz.Max(), Mt.Max(), My.Max(), Mz.Max() };
             }
-        
-            //---------------------------------------------------------------------------------
 
             /// <summary>
             /// Devuelve la envolvente de esfuerzos de una barra 
@@ -585,7 +519,7 @@ namespace RepositorioFuncionesGitHub
             /// <returns>
             /// Devuelve un array con la envolvente de esfuerzos de la barra
             /// </returns>
-            public static double[] GetOneFrameForces(cSapModel mySapModel,string combo, string frame)
+            public double[] GetOneFrameForces(cSapModel mySapModel, string combo, string frame)
             {
                 mySapModel.SetPresentUnits(eUnits.kN_m_C);
 
@@ -597,7 +531,7 @@ namespace RepositorioFuncionesGitHub
                 SelectHypotesis(mySapModel, combo, true);
 
                 int ret = mySapModel.FrameObj.SetSelected(frame, true, eItemType.Objects);
-                ret= mySapModel.Results.FrameForce(frame, eItemTypeElm.ObjectElm, ref NumberResults, ref Obj, ref ObjSta, ref Elm, ref ElmSta, ref LoadCase, ref StepType, ref StepNum, ref P, ref V2, ref V3, ref T, ref M2, ref M3);
+                ret = mySapModel.Results.FrameForce(frame, eItemTypeElm.ObjectElm, ref NumberResults, ref Obj, ref ObjSta, ref Elm, ref ElmSta, ref LoadCase, ref StepType, ref StepNum, ref P, ref V2, ref V3, ref T, ref M2, ref M3);
 
                 double N = Math.Max(Math.Abs(P.Max()), Math.Abs(P.Min()));
                 double Vy = Math.Max(Math.Abs(V2.Max()), Math.Abs(V2.Min()));
@@ -606,47 +540,18 @@ namespace RepositorioFuncionesGitHub
                 double My = Math.Max(Math.Abs(M2.Max()), Math.Abs(M2.Min()));
                 double Mz = Math.Max(Math.Abs(M3.Max()), Math.Abs(M3.Min()));
 
-                return new double[] {N,Vy,Vz,Mt,My,Mz };
+                return new double[] { N, Vy, Vz, Mt, My, Mz };
             }
-
-
-            //---------------------------------------------------------------------------------
-
-
-
-
-            //---------------------------------------------------------------------------------
-        
         }
 
         public class ExcelTablesSubclass // Clase para las funciones que hagan análisis (calcular, seleccionar hipótesis...)
         {
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-            // Traemos las propiedades de clase de la clase pricipal
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-
-
             private readonly SAP _sap;
 
             public ExcelTablesSubclass(SAP sap)
             {
                 _sap = sap;
             }
-
-
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
-
-            // Introducimos los métodos de la subclase 
-
-            //---------------------------------------------------------------------------------
-            //---------------------------------------------------------------------------------
 
 
 
@@ -666,11 +571,6 @@ namespace RepositorioFuncionesGitHub
                 int WindowHandle = 1;
                 SapModel.DatabaseTables.ShowTablesInExcel(ref TableKey, WindowHandle);
             }
-
-
-            //---------------------------------------------------------------------------------
-
-
 
             /// <summary>
             /// Obtiene una tabla determinada de un modelo de SAP2000
@@ -711,15 +611,11 @@ namespace RepositorioFuncionesGitHub
                 }
 
                 return tabla;
-            }
-            
-
-            //---------------------------------------------------------------------------------
-
-
-            
+            } 
         }
     
+    
+
         public class DesignSubclass // Clase par las funciones de apoyo para dimensionar perfiles
         {
             private readonly SAP _sap;
@@ -728,8 +624,8 @@ namespace RepositorioFuncionesGitHub
             {
                 _sap = sap;
             }
-            
-            //---------------------------------------------------------------------------------
+
+
 
             /// <summary>
             /// Busca el nombre del perfil (previamente seleccionado en el modelo) en la listaperfiles
@@ -744,7 +640,7 @@ namespace RepositorioFuncionesGitHub
             /// <returns>
             /// Devuelve el nombre del siguiente perfil de la lista.
             /// </returns>
-            public static string ChangeSection(cSapModel mySapModel, string[] listaperfiles)
+            public string ChangeSection(cSapModel mySapModel, string[] listaperfiles)
             {
                 int ret = 0;
                 int numberItems = 0;
@@ -779,8 +675,6 @@ namespace RepositorioFuncionesGitHub
                 return "";
             }
 
-            //---------------------------------------------------------------------------------
-
             /// <summary>
             /// Calcula el desplazamiento de un nudo, en SLS
             /// </summary>
@@ -791,15 +685,15 @@ namespace RepositorioFuncionesGitHub
             /// Nudo a evaluar
             /// </param>
             /// <returns></returns>
-            public static double JointDisplacement(cSapModel mySapModel, string joint)
+            public double JointDisplacement(cSapModel mySapModel, string joint)
             {
                 int NumberResults = 0;
                 string[] Obj = new string[1], Elm = new string[1], LoadCase = new string[1], StepType = new string[1];
                 double[] Stepnum = new double[1], U1 = new double[1], U2 = new double[1], U3 = new double[1], R1 = new double[1], R2 = new double[1], R3 = new double[1];
 
-                SAP.AnalysisSubclass.SelectHypotesis(mySapModel, "SLS", true);
+                _sap.Analysis.SelectHypotesis(mySapModel, "SLS", true);
 
-                int ret=mySapModel.Results.JointDispl(joint,eItemTypeElm.ObjectElm,ref NumberResults,ref Obj,ref Elm,ref LoadCase,ref StepType,ref Stepnum,ref U1,ref U2,ref U3,ref R1,ref R2,ref R3);
+                int ret = mySapModel.Results.JointDispl(joint, eItemTypeElm.ObjectElm, ref NumberResults, ref Obj, ref Elm, ref LoadCase, ref StepType, ref Stepnum, ref U1, ref U2, ref U3, ref R1, ref R2, ref R3);
 
                 double maxUx = Math.Max(Math.Abs(U1[0]), Math.Abs(U1[1]));
                 double maxUy = Math.Max(Math.Abs(U2[0]), Math.Abs(U2[1]));
@@ -807,15 +701,13 @@ namespace RepositorioFuncionesGitHub
 
                 double d = 0;
 
-                if(ret==0)
+                if (ret == 0)
                 {
                     d = Math.Sqrt(maxUx * maxUx + maxUy * maxUy + maxUz * maxUz);
                 }
 
                 return d;
             }
-
-            //---------------------------------------------------------------------------------
 
             /// <summary>
             /// Hace la comprobación de Torsor/cortante que no hace SAP2000
@@ -832,27 +724,27 @@ namespace RepositorioFuncionesGitHub
             /// <returns>
             /// Devuelve el aprovechamiento en cortante y torsión combinadas
             /// </returns>
-            public static double[] ShearTorsionInteractionCheck(cSapModel mySapModel, string barra, double punto)
+            public double[] ShearTorsionInteractionCheck(cSapModel mySapModel, string barra, double punto)
             {
                 //Sacamos del modelo los datos de diseño necesarios. Unidades en N y mm
                 mySapModel.SetPresentUnits(eUnits.N_mm_C);
-                SAP.AnalysisSubclass.SelectHypotesis(mySapModel, "ULS", true);
+                _sap.Analysis.SelectHypotesis(mySapModel, "ULS", true);
 
                 string PropName = "", SAuto = "";
-                double[] prop=SAP.AnalysisSubclass.GetSHSProperties(mySapModel, barra);
+                double[] prop = _sap.Analysis.GetSHSProperties(mySapModel, barra);
 
                 double gamma = 0;
                 mySapModel.DesignColdFormed.EuroCold06.GetPreference(8, ref gamma);
 
                 //Obtenemos esfuerzos. Unidades en kN y m
                 mySapModel.SetPresentUnits(eUnits.kN_m_C);
-                SAP.AnalysisSubclass.RunModel(mySapModel);
+                _sap.Analysis.RunModel(mySapModel);
 
-                double[] esfuerzos = SAP.AnalysisSubclass.GetFrameForces(mySapModel,"ULS", new[] {barra}, punto);
+                double[] esfuerzos = _sap.Analysis.GetFrameForces(mySapModel, "ULS", new[] { barra }, punto);
 
                 double VcEd = Math.Max(esfuerzos[1], esfuerzos[2]);
                 double MtEd = esfuerzos[3];
-                    
+
                 //Formulación
                 double d = prop[0] - (2 * prop[1]) - (2 * 7);
                 double Av = 2 * (prop[0] - (2 * prop[1]));
@@ -862,15 +754,13 @@ namespace RepositorioFuncionesGitHub
                 double TaoTEd = (MtEd * 1000) / Wt;
                 double VplTEd = VplRd * (1 - (TaoTEd / fyd / Math.Sqrt(3)));
                 double MtRd = (1 / Math.Sqrt(3)) * Wt * fyd / 1000;
-                    
+
                 //Ratios
                 double AprV = VcEd / VplTEd * 100;
                 double AprM = MtEd / MtRd * 100;
-            
-                return new[] {Math.Round(AprV,0), Math.Round(AprM,0)}; 
+
+                return new[] { Math.Round(AprV, 0), Math.Round(AprM, 0) };
             }
-        
-            //---------------------------------------------------------------------------------
 
             /// <summary>
             /// Calcula el vano (distancia libre) entre dos pilares consecutivos que rodean a un nudo específico,
@@ -889,15 +779,15 @@ namespace RepositorioFuncionesGitHub
             /// Distancia en el eje Y entre los dos pilares más cercanos que rodean al nudo especificado. 
             /// Si no se encuentra un vano válido, devuelve 0.
             /// </returns>
-            public static double FindSpan(cSapModel mySapModel, string joint, string[] piles)
+            public double FindSpan(cSapModel mySapModel, string joint, string[] piles)
             {
-                double X = 0, Y=0, Z = 0;
+                double X = 0, Y = 0, Z = 0;
 
                 mySapModel.PointElm.GetCoordCartesian(joint, ref X, ref Y, ref Z);
                 double coordNudoY = Y;
 
-                double[] coordPilaresY= new double[piles.Length];
-                for(int i=0;i<piles.Length;i++)
+                double[] coordPilaresY = new double[piles.Length];
+                for (int i = 0; i < piles.Length; i++)
                 {
                     double px = 0, py = 0, pz = 0;
                     mySapModel.PointElm.GetCoordCartesian(piles[i], ref px, ref py, ref pz);
@@ -920,22 +810,10 @@ namespace RepositorioFuncionesGitHub
 
                 return vano;
             }
-
-            //---------------------------------------------------------------------------------
-
-
-
-            //---------------------------------------------------------------------------------
-
-
-
-            //---------------------------------------------------------------------------------
-
-
-
-            //---------------------------------------------------------------------------------
         }
     
+    
+
         public class ElementFinderSubclass // Clase para las funciones que devuelven nombres de barras y nudos
         {
             private readonly SAP _sap;
@@ -946,9 +824,11 @@ namespace RepositorioFuncionesGitHub
             public ElementFinderSubclass(SAP sap)
             {
                 _sap = sap;
-                _tracker=new TrackerSubclass(this);
+                _tracker = new TrackerSubclass(this);
                 _fixed = new FixedSubclass(this);
             }
+
+
 
             public class TrackerSubclass // Funciones para trackers
             {
@@ -959,7 +839,7 @@ namespace RepositorioFuncionesGitHub
                     _elementFinder = elementFinder;
                 }
 
-                //---------------------------------------------------------------------------------
+
 
                 /// <summary>
                 /// Cuenta el número de vigas específicas en el modelo SAP2000 seleccionando ciertos objetos de marco.
@@ -970,7 +850,7 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// El número total de vigas encontradas y seleccionadas correctamente
                 /// </returns>
-                public static int BeamNumber(cSapModel mySapModel)
+                public int BeamNumber(cSapModel mySapModel)
                 {
                     mySapModel.SelectObj.ClearSelection();
 
@@ -998,9 +878,6 @@ namespace RepositorioFuncionesGitHub
                     return nvigas;
                 }
 
-
-                //---------------------------------------------------------------------------------
-
                 /// <summary>
                 /// Devuelve un array con los nombres de las vigas del lado norte que existen en el modelo SAP2000.
                 /// </summary>
@@ -1010,7 +887,7 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// Un array de cadenas con los nombres de las vigas encontradas
                 /// </returns>
-                public static string[] NorthBeams(cSapModel mySapModel)
+                public string[] NorthBeams(cSapModel mySapModel)
                 {
                     int nvigas = BeamNumber(mySapModel);
                     int contador = 0;
@@ -1018,9 +895,9 @@ namespace RepositorioFuncionesGitHub
                     string[] vigas = new string[nvigas];
 
                     int ret = mySapModel.FrameObj.SetSelected("B1", true, eItemType.Objects);
-                    if (ret == 0) 
-                    { 
-                        vigas[contador++]="B1"; 
+                    if (ret == 0)
+                    {
+                        vigas[contador++] = "B1";
                     }
 
                     ret = mySapModel.FrameObj.SetSelected("B1_Motor", true, eItemType.Objects);
@@ -1037,8 +914,6 @@ namespace RepositorioFuncionesGitHub
                     return vigas;
                 }
 
-                //---------------------------------------------------------------------------------
-
                 /// <summary>
                 /// Devuelve un array con los nombres de las vigas del lado sur que existen en el modelo SAP2000.
                 /// </summary>
@@ -1048,7 +923,7 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// Un array de cadenas con los nombres de las vigas encontradas
                 /// </returns>
-                public static string[] SouthBeams(cSapModel mySapModel)
+                public string[] SouthBeams(cSapModel mySapModel)
                 {
                     int nvigas = BeamNumber(mySapModel);
                     int contador = 0;
@@ -1075,8 +950,6 @@ namespace RepositorioFuncionesGitHub
                     return vigas;
                 }
 
-                //---------------------------------------------------------------------------------
-
                 /// <summary>
                 /// Genera un array con los nombres de las uniones entre vigas del lado norte en formato "B1", "B2", ..., hasta "Bn".
                 /// </summary>
@@ -1086,7 +959,7 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// Un array de cadenas con los identificadores de las uniones entre vigas del lado norte.
                 /// </returns>
-                public static string[] NorthBC(cSapModel mySapModel)
+                public string[] NorthBC(cSapModel mySapModel)
                 {
                     int nvigas = BeamNumber(mySapModel);
 
@@ -1100,8 +973,6 @@ namespace RepositorioFuncionesGitHub
                     return BC_n;
                 }
 
-                //---------------------------------------------------------------------------------
-
                 /// <summary>
                 /// Genera un array con los nombres de las uniones entre vigas del lado sur en formato "B1", "B2", ..., hasta "Bn".
                 /// </summary>
@@ -1111,7 +982,7 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// Un array de cadenas con los identificadores de las uniones entre vigas del lado sur.
                 /// </returns>
-                public static string[] SouthBC(cSapModel mySapModel)
+                public string[] SouthBC(cSapModel mySapModel)
                 {
                     int nvigas = BeamNumber(mySapModel);
 
@@ -1125,8 +996,6 @@ namespace RepositorioFuncionesGitHub
                     return BC_n;
                 }
 
-                //---------------------------------------------------------------------------------
-
                 /// <summary>
                 /// Cuenta el número de pilares específicas en el semitracker del modelo SAP2000. 
                 /// Devuelve la mitad de los pilares generales más el motor
@@ -1137,11 +1006,11 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// El número total de pilares encontradas y seleccionadas correctamente
                 /// </returns>
-                public static int PileNumber(cSapModel mySapModel)
+                public int PileNumber(cSapModel mySapModel)
                 {
                     int npilares = 0;
 
-                    for (int i = 0;i<=10;i++)
+                    for (int i = 0; i <= 10; i++)
                     {
                         string pilar = "Column_" + i;
                         int ret = mySapModel.FrameObj.SetSelected(pilar, true, eItemType.Objects);
@@ -1153,8 +1022,6 @@ namespace RepositorioFuncionesGitHub
                     return npilares;
                 }
 
-                //---------------------------------------------------------------------------------
-
                 /// <summary>
                 /// Devuelve un array con los nombres de los pilares del lado norte que existen en el modelo SAP2000.
                 /// </summary>
@@ -1164,20 +1031,18 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// Un array de cadenas con los nombres de los pilares encontrados
                 /// </returns>
-                public static string[] NorthPiles(cSapModel mySapModel)
+                public string[] NorthPiles(cSapModel mySapModel)
                 {
-                    string[] pilares_n= new string[PileNumber(mySapModel)];
+                    string[] pilares_n = new string[PileNumber(mySapModel)];
 
-                    for (int i = 1;i<=PileNumber(mySapModel);i++)
+                    for (int i = 1; i <= PileNumber(mySapModel); i++)
                     {
-                        int j=i - 1;
+                        int j = i - 1;
                         pilares_n[j] = "Column_" + i;
                     }
 
                     return pilares_n;
                 }
-
-                //---------------------------------------------------------------------------------
 
                 /// <summary>
                 /// Devuelve un array con los nombres de los pilares del lado sur que existen en el modelo SAP2000.
@@ -1188,7 +1053,7 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// Un array de cadenas con los nombres de los pilares encontrados
                 /// </returns>
-                public static string[] SouthPiles(cSapModel mySapModel)
+                public string[] SouthPiles(cSapModel mySapModel)
                 {
                     string[] pilares_n = new string[PileNumber(mySapModel)];
 
@@ -1200,8 +1065,6 @@ namespace RepositorioFuncionesGitHub
 
                     return pilares_n;
                 }
-
-                //---------------------------------------------------------------------------------
 
                 /// <summary>
                 /// Cuenta el número de vigas secundarias del norte en el modelo SAP2000. Si north=false
@@ -1217,18 +1080,18 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// El número total de vigas secundarias del lado norte o sur del tracker
                 /// </returns>
-                public static int SecundaryBeamNumber (cSapModel mySapModel, bool? north=true)
+                public int SecundaryBeamNumber(cSapModel mySapModel, bool? north = true)
                 {
                     int nsecundarias_n = 0;
                     string sb = "";
 
                     for (int i = 0; i <= 31; i++)
                     {
-                        if(north==true)
-                        { 
-                            sb = "SBsN_" + i; 
+                        if (north == true)
+                        {
+                            sb = "SBsN_" + i;
                         }
-                        else if(north==false)
+                        else if (north == false)
                         {
                             sb = "SBsS_" + i;
                         }
@@ -1245,8 +1108,6 @@ namespace RepositorioFuncionesGitHub
                     return nsecundarias_n;
                 }
 
-                //---------------------------------------------------------------------------------
-                
                 /// <summary>
                 /// Devuelve los nombres de las secundarias al norte del tracker. Si sup=true (por defecto)
                 /// devuelve el nombre de las vigas superiores, sino, el de las inferiores
@@ -1261,13 +1122,13 @@ namespace RepositorioFuncionesGitHub
                 /// Devuelve los nombres de las secundarias al norte del tracker. Si sup=true (por defecto)
                 /// devuelve el nombre de las vigas superiores, sino, el de las inferiores
                 /// </returns>
-                public static string[] NorthSecundaryBeams (cSapModel mySapModel, bool? sup=true)
+                public string[] NorthSecundaryBeams(cSapModel mySapModel, bool? sup = true)
                 {
                     int nsecundarias = SecundaryBeamNumber(mySapModel, true);
 
                     string[] secundarias = new string[nsecundarias];
 
-                    for(int i = 1;i<=nsecundarias;i++)
+                    for (int i = 1; i <= nsecundarias; i++)
                     {
                         int j = i - 1;
                         if (sup == true)
@@ -1282,8 +1143,6 @@ namespace RepositorioFuncionesGitHub
 
                     return secundarias;
                 }
-                
-                //---------------------------------------------------------------------------------
 
                 /// <summary>
                 /// Devuelve los nombres de las secundarias al sur del tracker. Si sup=true (por defecto)
@@ -1299,7 +1158,7 @@ namespace RepositorioFuncionesGitHub
                 /// Devuelve los nombres de las secundarias al sur del tracker. Si sup=true (por defecto)
                 /// devuelve el nombre de las vigas superiores, sino, el de las inferiores
                 /// </returns>
-                public static string[] SouthSecundaryBeams(cSapModel mySapModel, bool? sup = true)
+                public string[] SouthSecundaryBeams(cSapModel mySapModel, bool? sup = true)
                 {
                     int nsecundarias = SecundaryBeamNumber(mySapModel, true);
 
@@ -1321,14 +1180,12 @@ namespace RepositorioFuncionesGitHub
                     return secundarias;
                 }
 
-                //---------------------------------------------------------------------------------
-
                 /// <summary>
                 /// Devuelve los nombres de los refuerzos de las secundarias al norte del tracker. 
                 /// Si sup=true (por defecto) devuelve el nombre de las vigas superiores, sino, 
                 /// el de las inferiores
                 /// </summary>
-                /// <param name="mySapModel">
+                /// <param name="sapModel">
                 /// Instancia del modelo SAP2000
                 /// </param>
                 /// <param name="sup">
@@ -1339,7 +1196,7 @@ namespace RepositorioFuncionesGitHub
                 /// Si sup=true (por defecto) devuelve el nombre de las vigas superiores, sino, 
                 /// el de las inferiores
                 /// </returns>
-                public static string[] NorthSecundaryReinforcedBeams(cSapModel sapModel, bool? sup = true)
+                public string[] NorthSecundaryReinforcedBeams(cSapModel sapModel, bool? sup = true)
                 {
                     int nsecundarias = SecundaryBeamNumber(mySapModel, true);
 
@@ -1361,14 +1218,12 @@ namespace RepositorioFuncionesGitHub
                     return secundarias;
                 }
 
-                //---------------------------------------------------------------------------------
-
                 /// <summary>
                 /// Devuelve los nombres de los refuerzos de las secundarias al sur del tracker. 
                 /// Si sup=true (por defecto) devuelve el nombre de las vigas superiores, sino, 
                 /// el de las inferiores
                 /// </summary>
-                /// <param name="mySapModel">
+                /// <param name="sapModel">
                 /// Instancia del modelo SAP2000
                 /// </param>
                 /// <param name="sup">
@@ -1379,7 +1234,7 @@ namespace RepositorioFuncionesGitHub
                 /// Si sup=true (por defecto) devuelve el nombre de las vigas superiores, sino, 
                 /// el de las inferiores
                 /// </returns>
-                public static string[] SouthSecundaryReinforcedBeams(cSapModel sapModel, bool? sup = true)
+                public string[] SouthSecundaryReinforcedBeams(cSapModel sapModel, bool? sup = true)
                 {
                     int nsecundarias = SecundaryBeamNumber(mySapModel, true);
 
@@ -1401,8 +1256,6 @@ namespace RepositorioFuncionesGitHub
                     return secundarias;
                 }
 
-                //---------------------------------------------------------------------------------
-
                 /// <summary>
                 /// Obtiene los nodos iniciales o finales de un conjunto de barras de un modelo SAP2000
                 /// </summary>
@@ -1420,23 +1273,23 @@ namespace RepositorioFuncionesGitHub
                 /// <returns>
                 /// Array con los nombres de los nudos correspondientes al extremo especificado
                 /// </returns>
-                public static string[] GetJoints(cSapModel mySapModel, string[]frames, int joint)
+                public string[] GetJoints(cSapModel mySapModel, string[] frames, int joint)
                 {
-                    int nbarras=frames.Length;
+                    int nbarras = frames.Length;
 
-                    string[] point1= new string[nbarras];
-                    string[] point2= new string[nbarras];
+                    string[] point1 = new string[nbarras];
+                    string[] point2 = new string[nbarras];
 
-                    for (int i = 0;i< nbarras;i++)
+                    for (int i = 0; i < nbarras; i++)
                     {
-                        mySapModel.FrameObj.GetPoints(frames[i],ref point1[i],ref point2[i]);
+                        mySapModel.FrameObj.GetPoints(frames[i], ref point1[i], ref point2[i]);
                     }
 
-                    if(joint==1)
+                    if (joint == 1)
                     {
                         return point1;
                     }
-                    else if(joint==2)
+                    else if (joint == 2)
                     {
                         return point2;
                     }
@@ -1445,29 +1298,9 @@ namespace RepositorioFuncionesGitHub
                         return null;
                     }
                 }
-
-                //---------------------------------------------------------------------------------
-
-
-
-                //---------------------------------------------------------------------------------
-
-
-
-                //---------------------------------------------------------------------------------
-
-
-
-                //---------------------------------------------------------------------------------
-
-
-
-                //---------------------------------------------------------------------------------
-
-
-
-                //---------------------------------------------------------------------------------
             }
+
+
 
             public class FixedSubclass // Funciones para trackers
             {
@@ -1478,23 +1311,6 @@ namespace RepositorioFuncionesGitHub
                     _elementFinder = elementFinder;
                 }
 
-                //---------------------------------------------------------------------------------
-
-
-
-                //---------------------------------------------------------------------------------
-
-
-
-                //---------------------------------------------------------------------------------
-
-
-
-                //---------------------------------------------------------------------------------
-
-
-
-                //---------------------------------------------------------------------------------
 
             }
         }

@@ -1,4 +1,9 @@
 using System;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Windows;
+using Microsoft.Office.Interop.Word;
+
 
 
 namespace RepositorioFuncionesGitHub
@@ -48,22 +53,6 @@ namespace RepositorioFuncionesGitHub
 
 
 
-
-
-
-
-        //---------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------
-
-        // Escribir todas las subclases aquí. Añadir un docstring para tener 
-        // información acerca de su funcionamiento y parámetros de entrada
-        // y salida. Recordar añadirlo al excel de registro de métodos. Poner 
-        // todos los métodos públicos para evitar errores de acceso.
-
-        //---------------------------------------------------------------------------------
-        //---------------------------------------------------------------------------------
-
-
         /// <summary>
         /// Crea un documento nuevo a partir de un documento original que se toma como plantilla.
         /// El documento original está en una ruta absoluta y tiene predefinido un formato de estilos.
@@ -94,7 +83,7 @@ namespace RepositorioFuncionesGitHub
             {
                 Microsoft.Office.Interop.Word.Document doc = wordApp.Documents.Open(ref filePath, ref missing, ref readOnly, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref missing, ref isVisible, ref missing, ref missing, ref missing, ref missing);
 
-                    // Guardar y cerrar el documento
+                // Guardar y cerrar el documento
 
                 fileName2 = System.IO.Path.Combine(wordPath, fileName);
                 object fileFormat = WdSaveFormat.wdFormatDocumentDefault;
@@ -159,7 +148,7 @@ namespace RepositorioFuncionesGitHub
         {
             Microsoft.Office.Interop.Word.Application wordApp = new Microsoft.Office.Interop.Word.Application();
             try
-            { 
+            {
                 doc.Save();
                 doc.Close();
                 Marshal.ReleaseComObject(doc);
@@ -168,7 +157,7 @@ namespace RepositorioFuncionesGitHub
                 doc = null;
                 wordApp = null;
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 MessageBox.Show($"Error al cerrar el documento: {ex.Message}");
             }
@@ -218,7 +207,7 @@ namespace RepositorioFuncionesGitHub
         /// <param name="doc">
         /// Objeto word abierto
         /// </param>
-        public void AddPageBreak( Microsoft.Office.Interop.Word.Document doc)
+        public void AddPageBreak(Microsoft.Office.Interop.Word.Document doc)
         {
             try
             {
@@ -252,8 +241,8 @@ namespace RepositorioFuncionesGitHub
                 //Desactivar la actualización de la pantalla
                 wordApp.ScreenUpdating = false;
 
-                    // Añadir una tabla al final del documento
-                    Microsoft.Office.Interop.Word.Range range = doc.Content;
+                // Añadir una tabla al final del documento
+                Microsoft.Office.Interop.Word.Range range = doc.Content;
                 range.Collapse(WdCollapseDirection.wdCollapseEnd);
 
                 Table wordtable = doc.Tables.Add(range, table.GetLength(0), table.GetLength(1), ref missing, ref missing);
@@ -271,8 +260,8 @@ namespace RepositorioFuncionesGitHub
                     wordtable.Cell(1, j + 1).Shading.BackgroundPatternColor = (WdColor)(0xF3E2D9);
                 }
 
-                    // Rellenar la tabla con datos
-                    for (int i = 0; i < table.GetLength(0); i++)
+                // Rellenar la tabla con datos
+                for (int i = 0; i < table.GetLength(0); i++)
                 {
                     for (int j = 0; j < table.GetLength(1); j++)
                     {
@@ -338,17 +327,17 @@ namespace RepositorioFuncionesGitHub
         /// <param name="numberRows">
         /// Número de filas a las que se les va a aplicar el formato tipo encabezado.
         /// </param>
-        public void FormatHeaderRow(Microsoft.Office.Interop.Word.Document doc,int numberRows)
+        public void FormatHeaderRow(Microsoft.Office.Interop.Word.Document doc, int numberRows)
         {
             try
             {
-                if(doc.Tables.Count > 0)
+                if (doc.Tables.Count > 0)
                 {
-                    Microsoft.Office.Interop.Word.Table table=doc.Tables[doc.Tables.Count];
+                    Microsoft.Office.Interop.Word.Table table = doc.Tables[doc.Tables.Count];
 
                     for (int i = 0; i < numberRows; i++)
                     {
-                        Microsoft.Office.Interop.Word.Row row=table.Rows[i];
+                        Microsoft.Office.Interop.Word.Row row = table.Rows[i];
                         row.HeadingFormat = -1;
                     }
                 }
@@ -358,5 +347,22 @@ namespace RepositorioFuncionesGitHub
                 MessageBox.Show($"No se encuentra el documento: {ex.Message}");
             }
         }
+
+
+
+        //---------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------
+
+        // Escribir todas las subclases aquí. Añadir un docstring para tener 
+        // información acerca de su funcionamiento y parámetros de entrada
+        // y salida. Recordar añadirlo al excel de registro de métodos. Poner 
+        // todos los métodos públicos para evitar errores de acceso.
+
+        //---------------------------------------------------------------------------------
+        //---------------------------------------------------------------------------------
+
+
+
+
     }
 }
