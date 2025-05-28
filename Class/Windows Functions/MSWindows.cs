@@ -111,22 +111,28 @@ namespace RepositorioFuncionesGitHub
             /// <summary>
             /// Abre una ventana de Windows y te permite seleccionar un archivo con 
             /// cualquier extensión. Te devuelve un string con su ruta. Si no se selecciona 
-            /// nada te devuelve un string vacío.
+            /// nada te devuelve un string vacío. Se puede aplicar un filtro de extensión 
+            /// para escoger un tipo de archivo en concreto añadiendo un filtro como input.
             /// </summary>
             /// <param name="initialDirectory">
             /// Última ruta elegida. Útil si estas haciendo varias selecciones y no quieres tener
             /// que volver de nuevo siempre a la misma carpeta.
             /// </param>
+            /// <param name="filter">
+            /// Filtro de tipo de archivo de búsqueda. Por ejemplo, si queremos elegir solamente 
+            /// archivos de excel, poner como filtro "Archivos de Excel (*.xlsx;*.xlsm)|*.xlsx;*.xlsm". 
+            /// Por defecto, no hay filtro y se puede elegir cualquier extensión de archivo.
+            /// </param>
             /// <returns>
             /// Ruta del archivo seleccionado (string). Si no se selecciona nada te devuelve 
             /// un string vacío.
             /// </returns>
-            public string SearchFile(string initialDirectory = null)
+            public string SearchFile(string initialDirectory = null, string filter = null)
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog
                 {
                     Title = "Seleccionar archivo",
-                    Filter = "Todos los archivos (*.*)|*.*",
+                    Filter = string.IsNullOrEmpty(filter) ? "Todos los archivos (*.*)|*.*" : filter,
                     InitialDirectory = string.IsNullOrEmpty(initialDirectory) ? Environment.GetFolderPath(Environment.SpecialFolder.Desktop) : initialDirectory
                 };
 
